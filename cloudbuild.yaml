@@ -1,0 +1,34 @@
+---
+steps:
+- name: gcr.io/${_PROJECT}/gcp-devops:latest
+  id: tf-fmt
+  entrypoint: terraform
+  dir: deployments/dev
+  args:
+  - fmt
+  - -recursive
+  - -check
+- name: gcr.io/${_PROJECT}/gcp-devops:latest
+  id: tf-init
+  entrypoint: terraform
+  dir: deployments/dev
+  args:
+  - init
+- name: gcr.io/${_PROJECT}/gcp-devops:latest
+  id: tf-plan
+  entrypoint: bash
+  env: ["TF_VAR_project=${_PROJECT}"]
+  dir: deployments/dev
+  args:
+    - '-c'
+    - |
+      terraform plan -out=terraform.tfplan
+      terraform show -json terraform.tfplan > terraform.tfplan.json
+- name: gcr.io/${_PROJECT}/gcp-devops:latest
+  id: tf-validator
+  entrypoint: terraform-validator
+  dir: deployments/dev
+  args:
+  - validate
+  - terraform.tfplan.json
+  - --policy-path=../../policy-library/
