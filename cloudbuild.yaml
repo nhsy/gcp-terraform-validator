@@ -1,6 +1,6 @@
 ---
 steps:
-- name: gcr.io/${_PROJECT}/gcp-devops:latest
+- name: gcr.io/$PROJECT_ID/gcp-devops:latest
   id: tf-fmt
   entrypoint: terraform
   dir: deployments/dev
@@ -8,23 +8,28 @@ steps:
   - fmt
   - -recursive
   - -check
-- name: gcr.io/${_PROJECT}/gcp-devops:latest
+- name: gcr.io/$PROJECT_ID/gcp-devops:latest
   id: tf-init
   entrypoint: terraform
+  env:
+    - "TF_IN_AUTOMATION=1"
+    - "TF_VAR_project=$PROJECT_ID"
   dir: deployments/dev
   args:
   - init
-- name: gcr.io/${_PROJECT}/gcp-devops:latest
+- name: gcr.io/$PROJECT_ID/gcp-devops:latest
   id: tf-plan
   entrypoint: bash
-  env: ["TF_VAR_project=${_PROJECT}"]
+  env:
+    - "TF_IN_AUTOMATION=1"
+    - "TF_VAR_project=$PROJECT_ID"
   dir: deployments/dev
   args:
     - '-c'
     - |
       terraform plan -out=terraform.tfplan
       terraform show -json terraform.tfplan > terraform.tfplan.json
-- name: gcr.io/${_PROJECT}/gcp-devops:latest
+- name: gcr.io/$PROJECT_ID/gcp-devops:latest
   id: tf-validator
   entrypoint: terraform-validator
   dir: deployments/dev
