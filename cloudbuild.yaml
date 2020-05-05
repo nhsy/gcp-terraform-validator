@@ -12,7 +12,6 @@ steps:
   id: tf-init
   entrypoint: terraform
   env:
-    - "TF_IN_AUTOMATION=1"
     - "TF_VAR_project=$PROJECT_ID"
   dir: deployments/dev
   args:
@@ -21,7 +20,6 @@ steps:
   id: tf-plan
   entrypoint: bash
   env:
-    - "TF_IN_AUTOMATION=1"
     - "TF_VAR_project=$PROJECT_ID"
   dir: deployments/dev
   args:
@@ -37,3 +35,10 @@ steps:
   - validate
   - terraform.tfplan.json
   - --policy-path=../../policy-library/
+  - --project
+  - $PROJECT_ID
+options:
+  env:
+  - "TF_IN_AUTOMATION=1"
+  - "TF_CLI_ARGS_init=-input=false"
+  - "TF_CLI_ARGS_plan=-input=false"
