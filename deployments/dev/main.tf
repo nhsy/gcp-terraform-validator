@@ -1,9 +1,7 @@
 resource "google_compute_instance" "default" {
   name         = "gce-instance"
   machine_type = "g1-small"
-  zone         = var.zone
-
-  tags = ["backend"]
+  zone         = "europe-west2-a"
 
   can_ip_forward = true
 
@@ -24,6 +22,7 @@ resource "google_compute_instance" "default" {
 }
 
 data "google_compute_subnetwork" "default" {
-  name   = "default"
-  region = var.region
+  name    = "default"
+  project = var.project
+  region  = var.region
 }
