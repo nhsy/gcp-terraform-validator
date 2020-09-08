@@ -7,53 +7,69 @@
       @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
       @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
       @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro);
+      @import url(https://fonts.googleapis.com/css?family=Source+Code+Pro);
 
-      body { font-family: 'Droid Serif'; }
+      body { font-family: 'Source Sans Pro'; }
       h1, h2, h3 {
-        font-family: 'Yanone Kaffeesatz';
+        font-family: 'Source Sans Pro';
         font-weight: normal;
       }
-      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+      .remark-code, .remark-inline-code { 
+        font-family: 'Source Code Pro'; 
+        font-size: 0.7em;
+      }
+      .remark-container { background: #283070; }
+
+
+      .title-slide .remark-slide-number {
+        visibility: hidden;
+
     </style>
   </head>
   <body>
     <textarea id="source">
 
-class: center, middle
-
-# Your Workflow & the GitHub Platform
-
-???
-
-Notes for the _first_ slide!
+class: center, middle, title-slide
+count: false      
+      
+# Policy as Code using terraform-validator
 
 ---
 
 # Agenda
 
-1. Introduction
-2. Survey of tools and needs
-3. Looking for automation
-4. Creating an accessible and secure workflow
+1. What is Policy as Code?
+1. Policy as Code tools overview
+1. GCP terraform-validator
+1. Demo
 
 ---
 
-# Introduction
-
-      It's possible to embed images.
-![](https://cdn.shopify.com/s/files/1/0051/4802/products/mona-1_large.jpg?v=1511308586)
+# What is Policy as Code?
 
 ---
 
-# Survey of tools and needs
+# Policy as Code tools overview
 
 ---
 
-# Looking for automation
+# GCP terraform-validator
+
+.center[![|scale 20%](https://storage.googleapis.com/gweb-cloudblog-publish/images/1_config_validator.max-2800x2800.png)]
 
 ---
+# Demo
 
-# Creating an accessible and secure workflow
+    
+---
+      
+# References
+      
+
+* [Google terraform-validator](https://github.com/GoogleCloudPlatform/terraform-validator)
+* [Google Forsetti with terraform validator](https://cloud.google.com/blog/products/identity-security/using-forseti-config-validator-with-terraform-validator)      
+* [OPA official docs](https://www.openpolicyagent.org/docs/latest)      
 
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript">
