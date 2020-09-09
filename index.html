@@ -15,9 +15,9 @@
         font-family: 'Source Sans Pro';
         font-weight: normal;
       }
-      .remark-code, .remark-inline-code { 
-        font-family: 'Source Code Pro'; 
-        font-size: 0.7em;
+      .remark-code, .remark-inline-code {
+        font-family: 'Source Code Pro';
+        font-size: 0.5em;
       }
       .remark-container { background: #283070; }
 
@@ -33,42 +33,126 @@
 class: center, middle, title-slide
 count: false      
       
-# Policy as Code using terraform-validator
+# Terraform Policy as Code using Terraform Validator
 
 ---
 
 # Agenda
 
 1. What is Policy as Code?
-1. Policy as Code tools overview
-1. GCP terraform-validator
+1. Tools Overview
+1. Terraform Validator (GCP)
+1. Example Constraint
+1. Cloud Build Automation
 1. Demo
 
 ---
 
 # What is Policy as Code?
 
+* Ensure IaC deployments meet compliance and security policies
+
+* Remove human intervention and manual checks
+
+* Enable quick & rapid deployments
+
 ---
 
-# Policy as Code tools overview
+# Tools Overview
+
+### Open Source
+
+* Conftest - https://github.com/open-policy-agent/conftest
+
+* Pulumi CrossGuard - https://www.pulumi.com/docs/guides/crossguard
+
+* Terraform Validator - https://github.com/GoogleCloudPlatform/terraform-validator
+
+### Licensed
+
+* Terraform Enterprise Sentinel - https://www.hashicorp.com/sentinel
 
 ---
 
-# GCP terraform-validator
+# Terraform Validator (GCP)
 
 .center[![:scale 75%](https://storage.googleapis.com/gweb-cloudblog-publish/images/1_config_validator.max-2800x2800.png)]
 
+* Centralised git repo with baseline policies (also used by Forseti Security)
+
+* CI checks via pipeline
+
+* Prevent deployment of non compliant resources
+
+---
+
+# Example Constraint
+```yaml
+apiVersion: constraints.gatekeeper.sh/v1alpha1
+kind: GCPComputeExternalIpAccessConstraintV1
+metadata:
+  name: forbid_external_ip_whitelist
+  annotations:
+    # This constraint is not certified by CIS.
+    bundles.validator.forsetisecurity.org/cis-v1.1: 4.08
+spec:
+  severity: high
+  parameters:
+    # modes can be [whitelist, blacklist]
+    mode: whitelist
+    # match_mode can be [exact, regex], default is exact.
+    match_mode: regex
+    instances:
+      # regex example:
+      - //compute.googleapis.com/projects/test-project/.*
+      # exact match example:
+      - //compute.googleapis.com/projects/test-project/zones/us-east1-b/instances/vm-external-ip
+```
+
+---
+
+# Cloud Build Automation
+
+Add pipeline step as follows:
+
+```yaml
+steps:
+- name: gcr.io/config-validator/terraform-validator
+  entrypoint: terraform
+  dir: deployments/app1/dev
+  args:
+  - init
+- name: gcr.io/config-validator/terraform-validator
+  dir: deployments/app1/dev
+  entrypoint: terraform
+  args:
+  - plan
+  - -out=terraform.plan
+- name: gcr.io/config-validator/terraform-validator
+  entrypoint: "/bin/bash"
+  args: ['-c', 'terraform show -json terraform.plan > terraform.json']
+  dir: deployments/app1/dev
+- name: gcr.io/config-validator/terraform-validator
+  dir: deployments/app1/dev
+  args:
+  - validate
+  - terraform.json
+  - --policy-path=../../../policy-library/
+  - --project
+ - "<YOUR-PROJECT>"
+```
 ---
 # Demo
 
-    
 ---
       
 # References
 
 * [Google terraform-validator](https://github.com/GoogleCloudPlatform/terraform-validator)
-* [Google Forsetti with terraform validator](https://cloud.google.com/blog/products/identity-security/using-forseti-config-validator-with-terraform-validator)      
-* [OPA official docs](https://www.openpolicyagent.org/docs/latest)      
+
+* [Google Forsetti with terraform validator](https://cloud.google.com/blog/products/identity-security/using-forseti-config-validator-with-terraform-validator)
+
+* [OPA official docs](https://www.openpolicyagent.org/docs/latest)
 
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript">
